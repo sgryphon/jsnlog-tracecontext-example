@@ -18,6 +18,10 @@ namespace sample_app
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostContext, loggingBuilder) =>
+                {
+                    loggingBuilder.AddSeq();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
