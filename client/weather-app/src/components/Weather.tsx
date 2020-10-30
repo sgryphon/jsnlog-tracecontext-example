@@ -21,7 +21,10 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     }
   };
   populateWeatherData = async () => {
-    const response = await fetch('weatherforecast');
+    const headers = { 
+        'traceparent': '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01'
+    };
+    const response = await fetch('weatherforecast', { headers: headers});
     const data = await response.json();
     this.setState({ forecasts: data });
   }
