@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JSNLog" Version="2.29.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.9" />
     <PackageReference Include="Seq.Extensions.Logging" Version="4.0.2" />
   </ItemGroup>

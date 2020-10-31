@@ -1,3 +1,4 @@
+using JSNLog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace sample_app
 {
@@ -31,7 +33,7 @@ namespace sample_app
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -44,6 +46,10 @@ namespace sample_app
                 app.UseHsts();
             }
 
+            // Configure JSNLog
+            var jsnlogConfiguration = new JsnlogConfiguration();
+            app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
