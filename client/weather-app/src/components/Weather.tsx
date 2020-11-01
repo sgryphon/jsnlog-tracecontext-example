@@ -1,6 +1,8 @@
 import { trace } from "console";
 import { JL } from "jsnlog";
 import React, { PureComponent } from "react";
+import opentelemetry, { setActiveSpan } from '@opentelemetry/api'
+import { BasicTracerProvider } from '@opentelemetry/tracing'
 
 export interface Forecast {
     date: string;
@@ -23,8 +25,19 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     }
   };
   populateWeatherData = async () => {
-    const traceId = '0af7651916cd43dd8448eb211c80319c'
-    const spanId = 'b7ad6b7169203331'
+    // const traceId = '0af7651916cd43dd8448eb211c80319c'
+    // const spanId = 'b7ad6b7169203331'
+
+    const tracerProvider = new BasicTracerProvider();
+    tracerProvider.register();
+
+    const tracer = opentelemetry.trace.getTracer('default');
+    const span = tracer.startSpan('foo');
+    const context = span.context();
+    console.info(`traceId=${context.traceId}, spanId=${context.spanId}`)
+
+    const traceId = context.traceId
+    const spanId = context.spanId
 
     const traceContext: JL.JSNLogTraceContext = { traceId: traceId, spanId: spanId}
     JL('Client.Weather').info('Populate weather data', traceContext)
@@ -35,6 +48,8 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     const response = await fetch('weatherforecast', { headers: headers});
     const data = await response.json();
     this.setState({ forecasts: data });
+
+    span.end()
   }
   static renderForecastsTable(forecasts: Forecast[]) {
     return (
