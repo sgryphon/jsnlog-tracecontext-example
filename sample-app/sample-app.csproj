@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JSNLog" Version="2.29.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.9" />
     <PackageReference Include="Seq.Extensions.Logging" Version="4.0.2" />
   </ItemGroup>
@@ -21,6 +20,12 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="jsnlog, Version=1.0.0.0, Culture=neutral, PublicKeyToken=742e180f6c5ccd0d">
+      <HintPath>..\..\..\Dev\JSNLog\jsnlog\jsnlog\bin\Debug\netstandard2.0\jsnlog.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

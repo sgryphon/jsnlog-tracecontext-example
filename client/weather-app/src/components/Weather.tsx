@@ -1,3 +1,4 @@
+import { trace } from "console";
 import { JL } from "jsnlog";
 import React, { PureComponent } from "react";
 
@@ -25,7 +26,8 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     const traceId = '0af7651916cd43dd8448eb211c80319c'
     const spanId = 'b7ad6b7169203331'
 
-    JL('Client.Weather').info('Populate weather data')
+    const traceContext: JL.JSNLogTraceContext = { traceId: traceId, spanId: spanId}
+    JL('Client.Weather').info('Populate weather data', traceContext)
 
     const headers = { 
         'traceparent': `00-${traceId}-${spanId}-01`
