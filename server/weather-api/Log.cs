@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace sample_app
+namespace Weather.Api
 {
     internal static class Log
     {
