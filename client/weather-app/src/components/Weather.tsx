@@ -36,14 +36,11 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     const context = span.context();
     console.info(`traceId=${context.traceId}, spanId=${context.spanId}`)
 
-    const traceId = context.traceId
-    const spanId = context.spanId
-
-    const traceContext: JL.JSNLogTraceContext = { traceId: traceId, spanId: spanId}
-    JL('Client.Weather').info('Populate weather data', traceContext)
+    // JS duck-typing means I can just pass in the OpenTelemtry context to JSNLog, as they use the same property names
+    JL('Client.Weather').info('Populate weather data', context)
 
     const headers = { 
-        'traceparent': `00-${traceId}-${spanId}-01`
+        'traceparent': `00-${context.traceId}-${context.spanId}-01`
     };
     const response = await fetch('weatherforecast', { headers: headers});
     const data = await response.json();
