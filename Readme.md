@@ -13,7 +13,7 @@ Logging back end (Seq)
 ----------------------
 
 ```pwsh
-docker up
+docker-compose up
 ```
 
 Client app
