@@ -1,10 +1,8 @@
-import { trace } from "console";
 import { JL } from "jsnlog";
 import React, { PureComponent } from "react";
-import opentelemetry, { setExtractedSpanContext } from '@opentelemetry/api'
-import { HttpTraceContext } from '@opentelemetry/core'
+import opentelemetry from '@opentelemetry/api'
 import { BasicTracerProvider } from '@opentelemetry/tracing'
-import { ROOT_CONTEXT } from '@opentelemetry/context-base';
+import { WebTracerProvider } from '@opentelemetry/web'
 
 export interface Forecast {
     date: string;
@@ -30,7 +28,8 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
     // const traceId = '0af7651916cd43dd8448eb211c80319c'
     // const spanId = 'b7ad6b7169203331'
 
-    const tracerProvider = new BasicTracerProvider();
+    const tracerProvider = new WebTracerProvider();
+    //const tracerProvider = new BasicTracerProvider();
     tracerProvider.register();
 
     const tracer = opentelemetry.trace.getTracer('default');
@@ -43,8 +42,9 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
 
     // Use OpenTelemetry to inject the headers (correct format, etc)
     const headers = {};
-    const context = setExtractedSpanContext(ROOT_CONTEXT, spanContext)
-    opentelemetry.propagation.inject(headers, undefined, context);
+    tracer.withSpan(span, () => {
+      opentelemetry.propagation.inject(headers);
+    });
 
     const response = await fetch('weatherforecast', { headers: headers});
     const data = await response.json();
