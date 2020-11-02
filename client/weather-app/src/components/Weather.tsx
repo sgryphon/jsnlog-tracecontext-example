@@ -1,8 +1,10 @@
 import { trace } from "console";
 import { JL } from "jsnlog";
 import React, { PureComponent } from "react";
-import opentelemetry, { setActiveSpan } from '@opentelemetry/api'
+import opentelemetry, { setExtractedSpanContext } from '@opentelemetry/api'
+import { HttpTraceContext } from '@opentelemetry/core'
 import { BasicTracerProvider } from '@opentelemetry/tracing'
+import { ROOT_CONTEXT } from '@opentelemetry/context-base';
 
 export interface Forecast {
     date: string;
@@ -33,15 +35,17 @@ class WeatherComponent extends PureComponent<{}, { count: number, forecasts: For
 
     const tracer = opentelemetry.trace.getTracer('default');
     const span = tracer.startSpan('foo');
-    const context = span.context();
-    console.info(`traceId=${context.traceId}, spanId=${context.spanId}`)
+    const spanContext = span.context();
+    console.info(`traceId=${spanContext.traceId}, spanId=${spanContext.spanId}`)
 
-    // JS duck-typing means I can just pass in the OpenTelemtry context to JSNLog, as they use the same property names
-    JL('Client.Weather').info('Populate weather data', context)
+    // JS duck-typing means I can just pass in the OpenTelemetry context to JSNLog, as they use the same property names
+    JL('Client.Weather').info('Populate weather data', spanContext)
 
-    const headers = { 
-        'traceparent': `00-${context.traceId}-${context.spanId}-01`
-    };
+    // Use OpenTelemetry to inject the headers (correct format, etc)
+    const headers = {};
+    const context = setExtractedSpanContext(ROOT_CONTEXT, spanContext)
+    opentelemetry.propagation.inject(headers, undefined, context);
+
     const response = await fetch('weatherforecast', { headers: headers});
     const data = await response.json();
     this.setState({ forecasts: data });
