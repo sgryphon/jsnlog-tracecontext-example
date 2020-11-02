@@ -31,7 +31,8 @@ Server app
 ----------
 
 ```pwsh
-cd server/weather-app
+cd server/weather-api
+dotnet restore
 dotnet run
 ```
 
