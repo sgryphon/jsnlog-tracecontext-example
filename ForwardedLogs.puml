@@ -1,0 +1,26 @@
+@startuml
+
+actor user
+
+folder Client {
+    component "Client App" as client_app
+    component "Client log forwarder\n(jsnlog.js)" as log_forwarder
+}
+
+folder Server {
+    component "Server API" as server_api
+    component "Forwarded log handler\n(JSNLog)" as forwarded_log_handler
+    component "Logging" as logging
+}
+
+user -- client_app : 1. Click (start distributed trace D1, span A1) >
+client_app -r- server_api : 5. Call API with traceparent D1-A1 >
+server_api -- server_api : 6. Start span A2 (automatic) >
+server_api -- logging : 7. Server log D1-A2, parent A1 >
+
+client_app -d- log_forwarder : 2. Client log D1-A1 >
+log_forwarder -r- forwarded_log_handler : 3. Forward log D1-A1, parent 00 >
+forwarded_log_handler -r- logging : 4. Write log D1-A1, parent 00 >
+
+
+@enduml
